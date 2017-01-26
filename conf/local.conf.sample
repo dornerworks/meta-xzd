@@ -41,3 +41,26 @@ EXTERNAL_TOOLCHAIN_zynq = "/opt/Xilinx/SDK/2016.4/gnu/aarch32/lin/gcc-arm-linux-
 EXTERNAL_TOOLCHAIN_microblaze = "/opt/Xilinx/SDK/2016.4/gnu/microblaze/linux_toolchain/lin64_le"
 EXTERNAL_TOOLCHAIN_aarch64 = "/opt/Xilinx/SDK/2016.4/gnu/aarch64/lin/aarch64-linux"
 XILINX_SDK_TOOLCHAIN = "/opt/Xilinx/SDK/2016.4"
+
+#add Boot.bin dependency
+IMAGE_CLASSES += " xilinx-bootbin"
+
+#specify BIF common attribute for FSBL
+BIF_COMMON_ATTR= "fsbl_config"
+BIF_COMMON_ATTR[fsbl_config]="a53_x64"
+
+#specify BIF partition attributes required for BOOT.bin
+BIF_PARTITION_ATTR= "fsbl atf u-boot"
+
+#FSBL
+BIF_PARTITION_ATTR[fsbl]="bootloader"
+BIF_PARTITION_IMAGE[fsbl]="${DEPLOY_DIR_IMAGE}/fsbl-${MACHINE}.elf"
+BIF_PARTITION_DEPENDS[fsbl]="virtual/fsbl"
+
+#ATF
+BIF_PARTITION_ATTR[atf]="destination_cpu=a53-0,exception_level=el-3,trustzone"
+BIF_PARTITION_IMAGE[atf]="${DEPLOY_DIR_IMAGE}/arm-trusted-firmware-${TUNE_PKGARCH}.elf"
+
+#U-boot
+BIF_PARTITION_ATTR[u-boot]="destination_cpu=a53-0,exception_level=el-2"
+BIF_PARTITION_IMAGE[u-boot]="${DEPLOY_DIR_IMAGE}/u-boot-${MACHINE}.elf"
