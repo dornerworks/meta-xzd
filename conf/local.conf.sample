@@ -33,3 +33,11 @@ BB_DISKMON_DIRS = "\
 
 # Version Tracking
 CONF_VERSION = "1"
+
+# Use external tools
+TCMODE = "external-xilinx"
+XILINX_VER_MAIN = "2016.4"
+EXTERNAL_TOOLCHAIN_zynq = "/opt/Xilinx/SDK/2016.4/gnu/aarch32/lin/gcc-arm-linux-gnueabi"
+EXTERNAL_TOOLCHAIN_microblaze = "/opt/Xilinx/SDK/2016.4/gnu/microblaze/linux_toolchain/lin64_le"
+EXTERNAL_TOOLCHAIN_aarch64 = "/opt/Xilinx/SDK/2016.4/gnu/aarch64/lin/aarch64-linux"
+XILINX_SDK_TOOLCHAIN = "/opt/Xilinx/SDK/2016.4"
