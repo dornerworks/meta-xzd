@@ -1,0 +1,35 @@
+# Default Machine Selection
+#
+# XZD only runs on zynqmp machines
+MACHINE ??= "qemuzynqmp"
+
+# XZD is derived from Petalinux so default to its policy.
+DISTRO ?= "petalinux"
+
+# RPM same as the petalinux default
+PACKAGE_CLASSES ?= "package_rpm"
+
+# Yocto default
+EXTRA_IMAGE_FEATURES = "debug-tweaks"
+
+# Collect build statistics and reduce shared library file sizes
+USER_CLASSES ?= "buildstats image-mklibs"
+
+# Disable interactive patch resolution
+PATCHRESOLVE = "noop"
+
+# Shutdown if < 1GiB of Space or 100K inodes in (/tmp, TMPDIR, DL_DIR, SSTATE_DIR)
+#
+# Abort if < 100 MiB or 1K inodes.
+BB_DISKMON_DIRS = "\
+    STOPTASKS,${TMPDIR},1G,100K \
+    STOPTASKS,${DL_DIR},1G,100K \
+    STOPTASKS,${SSTATE_DIR},1G,100K \
+    STOPTASKS,/tmp,100M,100K \
+    ABORT,${TMPDIR},100M,1K \
+    ABORT,${DL_DIR},100M,1K \
+    ABORT,${SSTATE_DIR},100M,1K \
+    ABORT,/tmp,10M,1K"
+
+# Version Tracking
+CONF_VERSION = "1"
