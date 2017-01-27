@@ -43,7 +43,7 @@ EXTERNAL_TOOLCHAIN_aarch64 = "/opt/Xilinx/SDK/2016.4/gnu/aarch64/lin/aarch64-lin
 XILINX_SDK_TOOLCHAIN = "/opt/Xilinx/SDK/2016.4"
 
 #add Boot.bin dependency
-IMAGE_CLASSES += " xilinx-bootbin"
+IMAGE_CLASSES_append_zcu102-zynqmp = " xilinx-bootbin"
 
 #specify BIF common attribute for FSBL
 BIF_COMMON_ATTR= "fsbl_config"
