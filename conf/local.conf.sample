@@ -6,6 +6,9 @@ MACHINE ??= "qemuzynqmp"
 # XZD is derived from Petalinux so default to its policy.
 DISTRO ?= "petalinux"
 
+# Disable additional language support
+IMAGE_LINGUAS = ""
+
 # RPM same as the petalinux default
 PACKAGE_CLASSES ?= "package_rpm"
 
