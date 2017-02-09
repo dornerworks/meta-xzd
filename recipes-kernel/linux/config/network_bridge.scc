@@ -1,0 +1,4 @@
+define KFEATURE_DESCRIPTION "Network Bridging Support"
+define KFEATURE_COMPATIBILITY arch
+
+kconf non-hardware network_bridge.cfg
