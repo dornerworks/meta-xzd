@@ -40,3 +40,7 @@
    	};
    };
 };
+
+&xilinx_drm {
+	status = "disabled";
+};
