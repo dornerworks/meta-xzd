@@ -39,6 +39,15 @@
 		   reg = <0x0 0x80000 0x3100000>;
    	};
    };
+
+	timer {
+		compatible = "arm,armv8-timer";
+		interrupt-parent = <&gic>;
+		interrupts = <1 13 0xf04>,
+			     <1 14 0xf04>,
+			     <1 11 0xf04>,
+			     <1 10 0xf04>;
+	};
 };
 
 &xilinx_drm {
