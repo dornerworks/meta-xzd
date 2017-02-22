@@ -9,6 +9,15 @@ DISTRO ?= "xzd"
 # Disable additional language support
 IMAGE_LINGUAS = ""
 
+# Build the xen initramfs
+INITRAMFS_IMAGE = "xen-image-minimal-initramfs"
+
+# Bundle the initramfs with the kernel
+INITRAMFS_IMAGE_BUNDLE = "1"
+
+# The initramfs is kind of big
+INITRAMFS_MAXSIZE = "262144"
+
 # RPM same as the petalinux default
 PACKAGE_CLASSES ?= "package_rpm"
 
