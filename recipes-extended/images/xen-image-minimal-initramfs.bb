@@ -12,6 +12,7 @@ IMAGE_INSTALL += " \
     kernel-module-xen-wdt \
     xen-base \
     qemu \
+    overlay-fs \
     "
 
 LICENSE = "MIT"
