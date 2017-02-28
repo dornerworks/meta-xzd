@@ -13,6 +13,7 @@ IMAGE_INSTALL += " \
     pciutils \
     kernel-modules \
     iperf3 \
+    python3 \
     "
 
 IMAGE_LINGUAS = " "
