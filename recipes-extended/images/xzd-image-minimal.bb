@@ -12,6 +12,7 @@ IMAGE_INSTALL += " \
     canutils \
     pciutils \
     kernel-modules \
+    iperf3 \
     "
 
 IMAGE_LINGUAS = " "
