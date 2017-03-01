@@ -2,7 +2,7 @@ require recipes-bsp/u-boot/u-boot.inc
 
 DEPENDS += "dtc-native"
 
-SRCREV = "dw-v2016.3"
+SRCREV = "dw-v2016.4"
 
 UBOOT_REL="2016.07-dw"
 

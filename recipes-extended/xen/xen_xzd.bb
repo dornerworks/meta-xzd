@@ -1,7 +1,6 @@
 require recipes-extended/xen/xen.inc
 
-# Intial tag of xilinx-2016.3 tag
-SRCREV = "dw-v2016.3"
+SRCREV = "dw-v2016.4"
 
 XEN_REL="4.7-dw"
 
