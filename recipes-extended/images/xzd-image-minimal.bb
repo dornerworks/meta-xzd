@@ -15,6 +15,7 @@ IMAGE_INSTALL += " \
     iperf3 \
     python3 \
     python3-pyserial \
+    python3-importlib \
     "
 
 IMAGE_LINGUAS = " "
