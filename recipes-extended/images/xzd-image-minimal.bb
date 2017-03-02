@@ -14,6 +14,7 @@ IMAGE_INSTALL += " \
     kernel-modules \
     iperf3 \
     python3 \
+    python3-pyserial \
     "
 
 IMAGE_LINGUAS = " "
