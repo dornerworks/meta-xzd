@@ -46,7 +46,11 @@ for i in $(find $OVERLAY_DIR -maxdepth 1 -mindepth 1 -type d); do
     BASE_DIR=`basename $i`
     WORK_DIR=${OVERLAY_WORK}/${BASE_DIR}-work
 
-    if [[ ! -d $WORK_DIR ]]; then
+    if [ ! -d "$BASE_DIR" ]; then
+        mkdir $BASE_DIR
+    fi
+
+    if [ ! -d "$WORK_DIR" ]; then
         mkdir -p $WORK_DIR
     fi
 
