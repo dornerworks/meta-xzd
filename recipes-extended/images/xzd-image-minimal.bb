@@ -3,6 +3,13 @@ DESCRIPTION = "A minimal XZD image (Xen + Petalinux)"
 IMAGE_INSTALL += " \
     packagegroup-core-boot \
     packagegroup-core-ssh-dropbear \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'acpi', 'kernel-module-xen-acpi-processor', '', d)} \
+    kernel-module-xen-blkback \
+    kernel-module-xen-gntalloc \
+    kernel-module-xen-gntdev \
+    kernel-module-xen-netback \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'pci', 'kernel-module-xen-pciback', '', d)} \
+    kernel-module-xen-wdt \
     xen-base \
     qemu \
     openssh-sftp-server \
