@@ -13,7 +13,6 @@ IMAGE_INSTALL += " \
     xen-base \
     qemu \
     openssh-sftp-server \
-    tcf-agent \
     mtd-utils \
     bridge-utils \
     canutils \
