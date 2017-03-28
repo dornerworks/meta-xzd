@@ -1,0 +1,33 @@
+From 4c214fb506e006db9982b194fa023d6e5e1ad6cf Mon Sep 17 00:00:00 2001
+From: JarvisRoach <jarvis.roach@dornerworks.com>
+Date: Tue, 28 Mar 2017 15:20:27 -0400
+Subject: [PATCH] Enable GEM Virtualization Passthrough
+
+---
+ lib/sw_apps/zynqmp_fsbl/src/xfsbl_main.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/lib/sw_apps/zynqmp_fsbl/src/xfsbl_main.c b/lib/sw_apps/zynqmp_fsbl/src/xfsbl_main.c
+index 1fd23da..c0252cf 100644
+--- a/lib/sw_apps/zynqmp_fsbl/src/xfsbl_main.c
++++ b/lib/sw_apps/zynqmp_fsbl/src/xfsbl_main.c
+@@ -246,6 +246,16 @@ int main(void )
+ 				XFsbl_Printf(DEBUG_INFO,
+ 						"================= In Stage 4 ============ \n\r");
+ 
++            /* AXI Configuration Changes to Enable GEM Virtual Machine
++               Passthrough
++
++               Set GEMs AXI access to data, non-secure, normal
++               and unmask SMMU interrupts.
++             */
++            Xil_Out32(0xff240000, 0x492); /* write access */
++            Xil_Out32(0xff240004, 0x492);	/* read access */
++            Xil_Out32(0xFD5F0018, 0x1f);	/* unmask SMMU interrupts */
++
+ 				/**
+ 				 * Handoff to the applications
+ 				 * Handoff address
+-- 
+2.7.4
+
