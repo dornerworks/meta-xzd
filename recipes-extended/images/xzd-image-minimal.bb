@@ -22,6 +22,7 @@ IMAGE_INSTALL += " \
     python3 \
     python3-pyserial \
     python3-importlib \
+    python3-modules \
     xenbridge \
     "
 
