@@ -16,6 +16,10 @@ DEPENDS += "u-boot-mkimage-native"
 
 EXTRA_OEMAKE += 'CROSS_COMPILE=${TARGET_PREFIX}'
 
+# Need to enable debugging, so guests can use the hypervisor console.
+# Should be disabled if security is a concern.
+EXTRA_OEMAKE := "${@'${EXTRA_OEMAKE}'.replace('debug=n', 'debug=y')}"
+
 XENIMAGE_KERNEL_LOADADDRESS ?= "0x5000000"
 
 do_deploy_append() {
