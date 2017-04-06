@@ -11,7 +11,4 @@ SRC_URI = " \
 do_install () {
    install -d ${D}${sysconfdir}/network/if-pre-up.d/
    install -m 0755 ${WORKDIR}/xenbr0 ${D}${sysconfdir}/network/if-pre-up.d/xenbr0
-
-#   install -d ${D}${sysconfdir}/rcS.d/
-#   ln -sf ../init.d/xzd_overlay_fs ${D}${sysconfdir}/rcS.d/S45xzd_overlay_fs
 }
