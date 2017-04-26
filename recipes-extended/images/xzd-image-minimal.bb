@@ -11,6 +11,7 @@ IMAGE_INSTALL += " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'pci', 'kernel-module-xen-pciback', '', d)} \
     kernel-module-xen-wdt \
     xen-base \
+    xen-xenstat \
     qemu \
     openssh-sftp-server \
     mtd-utils \
