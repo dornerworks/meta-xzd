@@ -12,6 +12,7 @@ IMAGE_INSTALL += " \
     kernel-module-xen-wdt \
     xen-base \
     xen-xenstat \
+    xen-vchan-example \
     qemu \
     openssh-sftp-server \
     mtd-utils \

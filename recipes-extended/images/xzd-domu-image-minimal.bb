@@ -7,6 +7,7 @@ IMAGE_INSTALL += " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'acpi', 'kernel-module-xen-acpi-processor', '', d)} \
     kernel-module-xen-gntdev \
     kernel-module-xen-gntalloc \
+    xen-vchan-example \
     "
 
 LICENSE = "MIT"
