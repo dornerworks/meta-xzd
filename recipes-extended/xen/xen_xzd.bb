@@ -31,3 +31,18 @@ do_deploy_append() {
         -d ${DEPLOYDIR}/xen-${MACHINE} ${DEPLOYDIR}/xen.ub
     fi
 }
+
+PACKAGES += "${PN}-vchan-example"
+
+FILES_${PN}-vchan-example = "\
+    /root/libvchan-example/vchan-node1 \
+    /root/libvchan-example/vchan-node2 \
+    "
+
+do_install_append() {
+    install -d ${D}/root/libvchan-example/
+    install -m 0755 ${S}/tools/libvchan/vchan-node1 \
+            ${D}/root/libvchan-example/vchan-node1
+    install -m 0755 ${S}/tools/libvchan/vchan-node2 \
+            ${D}/root/libvchan-example/vchan-node2
+}
