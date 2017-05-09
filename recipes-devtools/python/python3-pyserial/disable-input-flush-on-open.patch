@@ -1,13 +1,13 @@
 diff --git a/serial/serialposix.py b/serial/serialposix.py
-index 3015bc9..f3c7ed1 100644
+index 0bf3df5..c5af45a 100644
 --- a/serial/serialposix.py
 +++ b/serial/serialposix.py
-@@ -311,7 +311,7 @@ class Serial(SerialBase, PlatformSpecific):
-             self._update_dtr_state()
-         if not self._rtscts:
-             self._update_rts_state()
+@@ -270,7 +270,7 @@ class Serial(SerialBase, PlatformSpecific):
+                 pass
+             else:
+                 raise
 -        self.reset_input_buffer()
-+        #self.reset_input_buffer()
- 
-     def _reconfigure_port(self, force_update=False):
-         """Set communication parameters on opened port."""
++#        self.reset_input_buffer()
+         self.pipe_abort_read_r, self.pipe_abort_read_w = os.pipe()
+         self.pipe_abort_write_r, self.pipe_abort_write_w = os.pipe()
+         fcntl.fcntl(self.pipe_abort_read_r, fcntl.F_SETFL, os.O_NONBLOCK)
