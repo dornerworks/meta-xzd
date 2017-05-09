@@ -13,8 +13,6 @@ INITSCRIPT_PARAMS = "defaults 45"
 
 inherit update-rc.d
 
-inherit autotools update-rc.d
-
 do_install () {
    install -d ${D}${sysconfdir}/init.d/
    install -m 0755 ${WORKDIR}/overlay_fs ${D}${sysconfdir}/init.d/xzd_overlay_fs
