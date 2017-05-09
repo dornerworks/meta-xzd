@@ -47,7 +47,6 @@ BB_DISKMON_DIRS = "\
 CONF_VERSION = "1"
 
 # Use external tools
-TCMODE = "external-xilinx"
 XILINX_VER_MAIN = "2017.1"
 EXTERNAL_TOOLCHAIN_zynq = "/opt/Xilinx/SDK/2017.1/gnu/aarch32/lin/gcc-arm-linux-gnueabi"
 EXTERNAL_TOOLCHAIN_microblaze = "/opt/Xilinx/SDK/2017.1/gnu/microblaze/linux_toolchain/lin64_le"
