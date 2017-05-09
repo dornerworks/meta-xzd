@@ -1,7 +1,7 @@
 # Default Machine Selection
 #
 # XZD only runs on zynqmp machines
-MACHINE ??= "qemuzynqmp"
+MACHINE ??= "zcu102-zynqmp"
 
 # XZD is derived from Petalinux so default to its policy.
 DISTRO ?= "xzd"
