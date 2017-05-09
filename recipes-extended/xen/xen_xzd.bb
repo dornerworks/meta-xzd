@@ -1,8 +1,8 @@
 require recipes-extended/xen/xen.inc
 
-SRCREV = "dw-v2016.4"
+SRCREV = "dw-v2017.1"
 
-XEN_REL="4.7-dw"
+XEN_REL="4.8-dw"
 
 PV = "${XEN_REL}+git${SRCPV}"
 
