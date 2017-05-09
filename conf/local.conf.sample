@@ -71,7 +71,7 @@ BIF_PARTITION_DEPENDS[fsbl]="virtual/fsbl"
 
 #ATF
 BIF_PARTITION_ATTR[atf]="destination_cpu=a53-0,exception_level=el-3,trustzone"
-BIF_PARTITION_IMAGE[atf]="${DEPLOY_DIR_IMAGE}/arm-trusted-firmware-${TUNE_PKGARCH}.elf"
+BIF_PARTITION_IMAGE[atf]="${DEPLOY_DIR_IMAGE}/arm-trusted-firmware.elf"
 
 #U-boot
 BIF_PARTITION_ATTR[u-boot]="destination_cpu=a53-0,exception_level=el-2"
