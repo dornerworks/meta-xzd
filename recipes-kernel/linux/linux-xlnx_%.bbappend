@@ -23,6 +23,7 @@ do_deploy_prepend() {
 }
 
 do_deploy_append() {
+	cd ${DEPLOYDIR}
 	ln -sf vmlinux-${KERNEL_IMAGE_BASE_NAME}.elf vmlinux
    ln -sf System.map-${KERNEL_IMAGE_BASE_NAME} System.map.linux
 }
