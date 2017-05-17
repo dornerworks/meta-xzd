@@ -16,6 +16,8 @@ SRC_URI += "file://network_bridge.scc"
 SRC_URI += "file://filesystem_overlay.scc"
 SRC_URI += "file://version.scc"
 
+LINUX_VERSION_EXTENSION = "-dw"
+
 # Debug file additions
 do_deploy_prepend() {
 	install -m 0644 System.map ${DEPLOYDIR}/System.map-${KERNEL_IMAGE_BASE_NAME}
