@@ -22,5 +22,9 @@
 
 if [ -f /proc/xen/capabilities ] && \
        grep -q "control_d" /proc/xen/capabilities ; then
+    # On Xen.  Bring up the bridge.
     ifup xenbr0
+else
+    # Not on Xen.  Get a DHCP address for eth0.
+    udhcpc -i eth0 -b
 fi
