@@ -50,6 +50,10 @@
 	};
 };
 
+&xilinx_ams {
+	status = "disabled";
+};
+
 &xilinx_drm {
 	status = "disabled";
 };
