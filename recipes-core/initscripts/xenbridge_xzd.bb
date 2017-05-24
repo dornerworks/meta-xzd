@@ -6,9 +6,18 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/scripts:"
 
 SRC_URI = " \
     file://xenbr0 \
+    file://xenbridge \
     "
+
+INITSCRIPT_NAME = "xenbridge"
+INITSCRIPT_PARAMS = "defaults 85"
+
+inherit update-rc.d
 
 do_install () {
    install -d ${D}${sysconfdir}/network/if-pre-up.d/
    install -m 0755 ${WORKDIR}/xenbr0 ${D}${sysconfdir}/network/if-pre-up.d/xenbr0
+
+   install -d ${D}${sysconfdir}/init.d/
+   install -m 0755 ${WORKDIR}/xenbridge ${D}${sysconfdir}/init.d/xenbridge
 }
