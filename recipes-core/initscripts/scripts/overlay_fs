@@ -68,7 +68,8 @@ case "$1" in
 	     do_start
 	     ;;
     status)
-	     ;;
+	     test -d "$EXTFS_MNT"
+        ;;
     stop)
 	     ;;
     restart)
