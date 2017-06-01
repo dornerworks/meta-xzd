@@ -63,4 +63,19 @@ do_start()
     done
 }
 
-do_start
+case "$1" in
+    start)
+	     do_start
+	     ;;
+    status)
+	     ;;
+    stop)
+	     ;;
+    restart)
+        ;;
+    *)
+	     echo $"Usage: $0 {start|stop|status|restart}"
+	     false
+esac
+
+exit $?
