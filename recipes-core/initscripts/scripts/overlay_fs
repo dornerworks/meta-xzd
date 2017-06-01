@@ -63,6 +63,28 @@ do_start()
     done
 }
 
+do_stop()
+{
+    if [ ! -b "$EXTFS_DEV" ]; then
+        echo "No overlay partition found."
+        exit 1
+    fi
+
+    echo "Tearing Down Overlay"
+
+    for i in $(find $OVERLAY_DIR -maxdepth 1 -mindepth 1 -type d); do
+        BASE_DIR=`basename $i`
+        WORK_DIR=${OVERLAY_WORK}/${BASE_DIR}-work
+
+        echo "Unmounting $i from $BASE_DIR"
+        umount $BASE_DIR
+        rm -rf $WORK_DIR
+    done
+
+    umount $EXTFS_MNT
+    rm -rf $EXTFS_MNT
+}
+
 case "$1" in
     start)
 	     do_start
@@ -71,8 +93,11 @@ case "$1" in
 	     test -d "$EXTFS_MNT"
         ;;
     stop)
+        do_stop
 	     ;;
     restart)
+        do_stop
+        do_start
         ;;
     *)
 	     echo $"Usage: $0 {start|stop|status|restart}"
