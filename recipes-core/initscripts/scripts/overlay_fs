@@ -29,33 +29,38 @@ if [ -b "/dev/xvda2" ]; then
     EXTFS_DEV="/dev/xvda2"
 fi
 
-if [ ! -b "$EXTFS_DEV" ]; then
-    echo "No overlay partition found."
-    exit 1
-fi
-
-echo "Creating Overlay Mountpoints"
-mkdir $EXTFS_MNT
-
-echo "Mounting Overlay Devices"
-echo "$EXTFS_DEV to $EXTFS_MNT"
-mount $EXTFS_DEV $EXTFS_MNT
-
-${OVERLAY_DIR}/usr/bin/set_hostname.sh
-for i in $(find $OVERLAY_DIR -maxdepth 1 -mindepth 1 -type d); do
-    BASE_DIR=`basename $i`
-    WORK_DIR=${OVERLAY_WORK}/${BASE_DIR}-work
-
-    if [ ! -d "$BASE_DIR" ]; then
-        mkdir $BASE_DIR
+do_start()
+{
+    if [ ! -b "$EXTFS_DEV" ]; then
+        echo "No overlay partition found."
+        exit 1
     fi
 
-    if [ ! -d "$WORK_DIR" ]; then
-        mkdir -p $WORK_DIR
-    fi
+    echo "Creating Overlay Mountpoints"
+    mkdir $EXTFS_MNT
 
-    echo "Mount $i over $BASE_DIR using $WORK_DIR"
-    mount -t overlay overlay \
-          -olowerdir=$BASE_DIR,upperdir=$i,workdir=$WORK_DIR \
-          $BASE_DIR
-done
+    echo "Mounting Overlay Devices"
+    echo "$EXTFS_DEV to $EXTFS_MNT"
+    mount $EXTFS_DEV $EXTFS_MNT
+
+    ${OVERLAY_DIR}/usr/bin/set_hostname.sh
+    for i in $(find $OVERLAY_DIR -maxdepth 1 -mindepth 1 -type d); do
+        BASE_DIR=`basename $i`
+        WORK_DIR=${OVERLAY_WORK}/${BASE_DIR}-work
+
+        if [ ! -d "$BASE_DIR" ]; then
+            mkdir $BASE_DIR
+        fi
+
+        if [ ! -d "$WORK_DIR" ]; then
+            mkdir -p $WORK_DIR
+        fi
+
+        echo "Mount $i over $BASE_DIR using $WORK_DIR"
+        mount -t overlay overlay \
+              -olowerdir=$BASE_DIR,upperdir=$i,workdir=$WORK_DIR \
+              $BASE_DIR
+    done
+}
+
+do_start
