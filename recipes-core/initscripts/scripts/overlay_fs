@@ -60,6 +60,10 @@ do_start()
         mount -t overlay overlay \
               -olowerdir=$BASE_DIR,upperdir=$i,workdir=$WORK_DIR \
               $BASE_DIR
+
+        if [ $? -ne 0 ]; then
+            rm -rf $WORK_DIR
+        fi
     done
 }
 
@@ -77,8 +81,11 @@ do_stop()
         WORK_DIR=${OVERLAY_WORK}/${BASE_DIR}-work
 
         echo "Unmounting $i from $BASE_DIR"
-        umount $BASE_DIR
-        rm -rf $WORK_DIR
+
+        if [ -d "$WORK_DIR" ]; then
+            umount $BASE_DIR
+            rm -rf $WORK_DIR
+        fi
     done
 
     umount $EXTFS_MNT
