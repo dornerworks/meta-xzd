@@ -12,6 +12,10 @@ SRC_URI = " \
     git://github.com/dornerworks/xen.git;protocol=https;branch=${SRCREV} \
     "
 
+SRC_URI += " \
+    file://defconfig \
+    "
+
 DEPENDS += "u-boot-mkimage-native"
 
 EXTRA_OEMAKE += 'CROSS_COMPILE=${TARGET_PREFIX}'
@@ -46,3 +50,4 @@ do_install_append() {
     install -m 0755 ${S}/tools/libvchan/vchan-node2 \
             ${D}/root/libvchan-example/vchan-node2
 }
+
