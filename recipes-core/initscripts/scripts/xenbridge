@@ -20,7 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-if [ "$1" == "start" ]; then
+do_start()
+{
     if [ -f /proc/xen/capabilities ] && \
            grep -q "control_d" /proc/xen/capabilities ; then
         # On Xen.  Bring up the bridge.
@@ -29,4 +30,44 @@ if [ "$1" == "start" ]; then
         # Not on Xen.  Get a DHCP address for eth0.
         udhcpc -i eth0 -b
     fi
-fi
+}
+
+do_stop()
+{
+    if [ -f /proc/xen/capabilities ] && \
+           grep -q "control_d" /proc/xen/capabilities ; then
+        # On Xen.  Bring down the bridge.
+        ifdown xenbr0
+    fi
+}
+
+do_restart()
+{
+    if [ -f /proc/xen/capabilities ] && \
+           grep -q "control_d" /proc/xen/capabilities ; then
+        # On Xen.  Restart the bridge.
+        ifdown xenbr0
+        ifup xenbr0
+    fi
+}
+
+case "$1" in
+    start)
+	     do_start
+	     ;;
+    status)
+	     ifconfig | grep -q xenbr0
+        ;;
+    stop)
+        do_stop
+	     ;;
+    restart)
+        do_stop
+        do_start
+        ;;
+    *)
+	     echo $"Usage: $0 {start|stop|status|restart}"
+	     false
+esac
+
+exit $?
