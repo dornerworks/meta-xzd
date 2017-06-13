@@ -54,6 +54,14 @@
 	status = "disabled";
 };
 
+&ams_ps {
+	status = "disabled";
+};
+
+&ams_pl {
+	status = "disabled";
+};
+
 &xilinx_drm {
 	status = "disabled";
 };
