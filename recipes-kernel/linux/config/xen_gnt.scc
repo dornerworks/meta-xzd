@@ -1,0 +1,4 @@
+define KFEATURE_DESCRIPTION "Xen driver support"
+define KFEATURE_COMPATIBILITY arch
+
+kconf non-hardware xen_gnt.cfg

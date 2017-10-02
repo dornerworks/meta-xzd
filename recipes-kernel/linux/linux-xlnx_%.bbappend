@@ -12,6 +12,7 @@ KERNEL_DEVICETREE += "xilinx/xen-zcu102.dtb \
 # Config fragments
 FILESEXTRAPATHS_prepend := "${THISDIR}/config:"
 
+SRC_URI += "file://xen_gnt.scc"
 SRC_URI += "file://network_bridge.scc"
 SRC_URI += "file://filesystem_overlay.scc"
 SRC_URI += "file://version.scc"
@@ -27,5 +28,5 @@ do_deploy_prepend() {
 do_deploy_append() {
 	cd ${DEPLOYDIR}
 	ln -sf vmlinux-${KERNEL_IMAGE_BASE_NAME}.elf vmlinux
-   ln -sf System.map-${KERNEL_IMAGE_BASE_NAME} System.map.linux
+	ln -sf System.map-${KERNEL_IMAGE_BASE_NAME} System.map.linux
 }
