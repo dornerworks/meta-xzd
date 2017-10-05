@@ -99,3 +99,31 @@
 	status = "disabled";
 	xen,passthrough = <1>;
 };
+
+&xlnx_dp {
+	status = "disabled";
+};
+
+&xlnx_dp_snd_card {
+	status = "disabled"; 
+};
+
+&xlnx_dp_snd_codec0 {
+	status = "disabled";
+};
+
+&xlnx_dp_snd_pcm0 {
+	status = "disabled";
+};
+
+&xlnx_dp_snd_pcm1 {
+	status = "disabled";
+};
+
+&xlnx_dp_sub {
+	status = "disabled";
+};
+
+&xlnx_dpdma {
+	status = "disabled";
+};
