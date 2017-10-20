@@ -1,13 +1,17 @@
 # Device tree appends
-SRC_URI += "file://xen-zcu102.dts;subdir=git/arch/${ARCH}/boot/dts/xilinx \
-            file://xen-zcu102-enet_pt.dts;subdir=git/arch/${ARCH}/boot/dts/xilinx"
+SRC_URI_append_zcu102-zynqmp = " file://xen-zcu102.dts;subdir=git/arch/${ARCH}/boot/dts/xilinx \
+                                 file://xen-zcu102-enet_pt.dts;subdir=git/arch/${ARCH}/boot/dts/xilinx"
+SRC_URI_append_ultrazed-zynqmp = " file://xen-ultrazed.dts;subdir=git/arch/${ARCH}/boot/dts/xilinx \
+                                   file://xen-ultrazed-enet_pt.dts;subdir=git/arch/${ARCH}/boot/dts/xilinx"
 
 FILESEXTRAPATHS_prepend_zynqmp := "${THISDIR}/dts:"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-KERNEL_DEVICETREE += "xilinx/xen-zcu102.dtb \
-                      xilinx/xen-zcu102-enet_pt.dtb"
+KERNEL_DEVICETREE_append_zcu102-zynqmp = " xilinx/xen-zcu102.dtb \
+                                          xilinx/xen-zcu102-enet_pt.dtb"
+KERNEL_DEVICETREE_append_ultrazed-zynqmp = " xilinx/xen-ultrazed.dtb \
+                                             xilinx/xen-ultrazed-enet_pt.dtb"
 
 # Config fragments
 FILESEXTRAPATHS_prepend := "${THISDIR}/config:"

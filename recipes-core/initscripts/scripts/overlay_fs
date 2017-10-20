@@ -24,10 +24,7 @@ EXTFS_MNT="/extendedfs-overlay"
 OVERLAY_DIR=$EXTFS_MNT/overlay
 OVERLAY_WORK=$EXTFS_MNT/work
 
-EXTFS_DEV="/dev/mmcblk0p2"
-if [ -b "/dev/xvda2" ]; then
-    EXTFS_DEV="/dev/xvda2"
-fi
+EXTFS_DEV="/dev/disk/by-label/overlayfs"
 
 do_start()
 {
