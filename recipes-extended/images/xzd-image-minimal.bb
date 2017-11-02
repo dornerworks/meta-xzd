@@ -2,7 +2,8 @@ DESCRIPTION = "A minimal XZD image (Xen + Petalinux)"
 
 require recipes-core/images/petalinux-image-common.inc
 
-IMAGE_FEATURES += "petalinux-xen"
+IMAGE_FEATURES_append_zynqmp = " ${@bb.utils.contains('DISTRO_FEATURES', 'xen', 'petalinux-xen', '', d)} \
+                               "
 
 IMAGE_INSTALL = " \
     packagegroup-core-boot \
