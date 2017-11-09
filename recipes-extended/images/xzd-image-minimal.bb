@@ -18,6 +18,7 @@ IMAGE_INSTALL = " \
     python3-modules \
     xenbridge \
     ${CORE_IMAGE_EXTRA_INSTALL} \
+    a653sched \
     "
 
 IMAGE_LINGUAS = " "
