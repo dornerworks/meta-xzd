@@ -48,11 +48,11 @@ BB_DISKMON_DIRS = "\
 CONF_VERSION = "1"
 
 # Use external tools
-XILINX_VER_MAIN = "2017.1"
-EXTERNAL_TOOLCHAIN_zynq = "/opt/Xilinx/SDK/2017.1/gnu/aarch32/lin/gcc-arm-linux-gnueabi"
-EXTERNAL_TOOLCHAIN_microblaze = "/opt/Xilinx/SDK/2017.1/gnu/microblaze/linux_toolchain/lin64_le"
-EXTERNAL_TOOLCHAIN_aarch64 = "/opt/Xilinx/SDK/2017.1/gnu/aarch64/lin/aarch64-linux"
-XILINX_SDK_TOOLCHAIN = "/opt/Xilinx/SDK/2017.1"
+XILINX_VER_MAIN = "2017.3"
+EXTERNAL_TOOLCHAIN_zynq = "/opt/Xilinx/SDK/2017.3/gnu/aarch32/lin/gcc-arm-linux-gnueabi"
+EXTERNAL_TOOLCHAIN_microblaze = "/opt/Xilinx/SDK/2017.3/gnu/microblaze/linux_toolchain/lin64_le"
+EXTERNAL_TOOLCHAIN_aarch64 = "/opt/Xilinx/SDK/2017.3/gnu/aarch64/lin/aarch64-linux"
+XILINX_SDK_TOOLCHAIN = "/opt/Xilinx/SDK/2017.3"
 
 #add Boot.bin dependency
 IMAGE_CLASSES_append_zcu102-zynqmp = " xilinx-bootbin"

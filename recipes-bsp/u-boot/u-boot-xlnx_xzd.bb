@@ -13,5 +13,5 @@ PV = "${UBOOT_REL}+git${SRCPV}"
 S = "${WORKDIR}/git"
 
 SRC_URI = " \
-    git://github.com/dornerworks/u-boot-xlnx.git;protocol=https;branch=ultrazed \
+    git://github.com/dornerworks/u-boot-xlnx.git;protocol=https;branch=dw-v2017.3 \
     "

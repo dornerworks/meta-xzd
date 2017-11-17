@@ -1,6 +1,6 @@
 require recipes-extended/xen/xen.inc
 
-SRCREV = "dw-v2017.1"
+SRCREV = "dw-v2017.3"
 
 XEN_REL="4.8-dw"
 
