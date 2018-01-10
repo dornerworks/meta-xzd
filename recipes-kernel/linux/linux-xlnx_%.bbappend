@@ -13,10 +13,12 @@ KERNEL_DEVICETREE_append_zcu102-zynqmp = " xilinx/xen-zcu102.dtb \
 KERNEL_DEVICETREE_append_ultrazed-zynqmp = " xilinx/xen-ultrazed.dtb \
                                              xilinx/xen-ultrazed-enet_pt.dtb"
 
+RPROVIDES_kernel-image += "kernel-module-xen-gntalloc"
+RPROVIDES_kernel-image += "kernel-module-xen-gntdev"
+
 # Config fragments
 FILESEXTRAPATHS_prepend := "${THISDIR}/config:"
 
-SRC_URI += "file://xen_gnt.scc"
 SRC_URI += "file://network_bridge.scc"
 SRC_URI += "file://filesystem_overlay.scc"
 SRC_URI += "file://version.scc"
