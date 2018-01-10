@@ -31,7 +31,7 @@
       stdout-path = "serial0:115200n8";
       #address-cells = <0x2>;
       #size-cells = <0x1>;
-      xen,xen-bootargs = "console=dtuart dtuart=serial0 dom0_mem=512M bootscrub=0 dom0_vcpus_pin maxcpus=2 timer_slop=0 dom0_max_vcpus=2";
+      xen,xen-bootargs = "console=dtuart dtuart=serial0 dom0_mem=640M bootscrub=0 dom0_vcpus_pin maxcpus=2 timer_slop=0 dom0_max_vcpus=2";
 	   xen,dom0-bootargs = "console=hvc0 earlycon=xen earlyprintk=xen rootdelay=1 root=/dev/ram devtmpfs.mount=1 clk_ignore_unused";
 
 	   dom0 {
