@@ -127,3 +127,14 @@
 &xlnx_dpdma {
 	status = "disabled";
 };
+
+&usb0 {
+	#stream-id-cells = <0x1>;
+	iommus = <&smmu 0x860>;
+};
+
+&usb1 {
+	#stream-id-cells = <0x1>;
+	iommus = <&smmu 0x861>;
+};
+
