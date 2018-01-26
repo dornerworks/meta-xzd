@@ -1,0 +1,4 @@
+define KFEATURE_DESCRIPTION "CMA Size"
+define KFEATURE_COMPATIBILITY arch
+
+kconf non-hardware cma_size.cfg
