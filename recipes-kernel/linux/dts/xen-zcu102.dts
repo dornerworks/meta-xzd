@@ -21,10 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include "zynqmp-zcu102-revB.dts"
-
+/dts-v1/;
+/include/ "dtg/zynqmp.dtsi"
+/include/ "dtg/zynqmp-clk-ccf.dtsi"
+/include/ "dtg/zcu102-rev1.0.dtsi"
+/include/ "dtg/pl.dtsi"
+/include/ "dtg/pcw.dtsi"
 / {
-	model = "ZynqMP ZCU102 Xen";
+	model = "ZynqMP ZCU102 Xen with PL";
 
    chosen {
       bootargs = "earlycon=cdns,mmio,0xFF000000,115200n8";
