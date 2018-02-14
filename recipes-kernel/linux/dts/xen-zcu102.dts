@@ -21,21 +21,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 /dts-v1/;
-/include/ "dtg/zynqmp.dtsi"
-/include/ "dtg/zynqmp-clk-ccf.dtsi"
-/include/ "dtg/zcu102-rev1.0.dtsi"
-/include/ "dtg/pl.dtsi"
-/include/ "dtg/pcw.dtsi"
+/include/ "dtg/system-top.dts"
+
+
 / {
     model = "ZynqMP ZCU102 Xen";
 
     chosen {
         bootargs = "earlycon=cdns,mmio,0xFF000000,115200n8";
-        stdout-path = "serial0:115200n8";
+        stdout-path = "serialN:115200n8";
         #address-cells = <0x2>;
         #size-cells = <0x1>;
-        xen,xen-bootargs = "console=dtuart dtuart=serial0 dom0_mem=512M bootscrub=0 dom0_vcpus_pin maxcpus=2 timer_slop=0 dom0_max_vcpus=2";
+        xen,xen-bootargs = "console=dtuart dtuart=serialN dom0_mem=512M bootscrub=0 dom0_vcpus_pin maxcpus=2 timer_slop=0 dom0_max_vcpus=2";
         xen,dom0-bootargs = "console=hvc0 earlycon=xen earlyprintk=xen rootdelay=1 root=/dev/ram devtmpfs.mount=1 clk_ignore_unused";
 
         dom0 {
@@ -43,22 +42,6 @@
             reg = <0x0 0x80000 0x3100000>;
         };
     };
-    
-    aliases {
-        ethernet0 = &gem0;
-        ethernet1 = &gem3;
-        serial0 = &uart0;
-        serial1 = &uart1;
-        serial2 = &axi_uartlite_0;
-        spi0 = &axi_quad_spi_0;
-        spi1 = &qspi;
-    };
-    
-    memory {
-        device_type = "memory";
-        reg = <0x0 0x0 0x0 0x80000000>, <0x00000008 0x00000000 0x0 0x80000000>;
-    };
-
     timer {
         compatible = "arm,armv8-timer";
         interrupt-parent = <&gic>;

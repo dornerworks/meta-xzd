@@ -29,9 +29,16 @@ SRC_URI += "file://cma_size.scc"
 LINUX_VERSION_EXTENSION = "-dw"
 do_compile[depends] += "device-tree-generation:do_deploy"
 
+S1 = "${S}/arch/${ARCH}/boot/dts/xilinx/dtg/system-top.dts"
+D1_append_zcu102-zynqmp = "${S}/arch/${ARCH}/boot/dts/xilinx/xen-zcu102.dts"
+
 do_compile_prepend() {
     mkdir -p ${S}/arch/${ARCH}/boot/dts/xilinx/dtg
     install -m 0644 ${DEPLOY_DIR_IMAGE}/dtg/*.dtsi  ${S}/arch/${ARCH}/boot/dts/xilinx/dtg/
+    install -m 0644 ${DEPLOY_DIR_IMAGE}/dtg/system-top.dts  ${S}/arch/${ARCH}/boot/dts/xilinx/dtg/
+    sed -i "s/serial[0-9]/serialN/g" ${D1}
+    sed -i "s/serialN/$(grep -oP  'serial\d(?= .*uart0)' ${S1})/g" ${D1}
+
 }
 
 # Debug file additions
