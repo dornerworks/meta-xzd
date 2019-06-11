@@ -1,0 +1,51 @@
+From 245f3430be98678b425d35551a6ddad6bb43a98b Mon Sep 17 00:00:00 2001
+From: Jeff Kubascik <jeff.kubascik@dornerworks.com>
+Date: Mon, 4 Mar 2019 14:14:05 -0500
+Subject: [PATCH] Check zone before merging adjacent blocks in heap
+
+The Xen heap is split up into nodes and zones. Each node + zone is
+managed as a separate pool of memory.
+
+When returning pages to the heap, free_heap_pages will check adjacent
+blocks to see if they can be combined into a larger block. However, the
+zone of the adjacent block is not checked. This results in blocks that
+migrate from one zone to another.
+
+When a block migrates to the adjacent zone, the avail counters for the
+old and new node + zone is not updated accordingly. The avail counter
+is used when allocating pages to determine whether to skip over a zone.
+With this behavior, it is possible for free pages to collect in a zone
+with the avail counter smaller than the actual page count, resulting
+in free pages that are not allocable.
+
+This commit adds a check to compare the adjacent block's zone with the
+current zone before merging them.
+
+Signed-off-by: Jeff Kubascik <Jeff.Kubascik@dornerworks.com>
+---
+ xen/common/page_alloc.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/xen/common/page_alloc.c b/xen/common/page_alloc.c
+index 482f098..a92268c 100644
+--- a/xen/common/page_alloc.c
++++ b/xen/common/page_alloc.c
+@@ -1419,6 +1419,7 @@ static void free_heap_pages(
+             if ( !mfn_valid(page_to_mfn(predecessor)) ||
+                  !page_state_is(predecessor, free) ||
+                  (PFN_ORDER(predecessor) != order) ||
++                 (page_to_zone(pg-mask) != zone) ||
+                  (phys_to_nid(page_to_maddr(predecessor)) != node) )
+                 break;
+ 
+@@ -1442,6 +1443,7 @@ static void free_heap_pages(
+             if ( !mfn_valid(page_to_mfn(successor)) ||
+                  !page_state_is(successor, free) ||
+                  (PFN_ORDER(successor) != order) ||
++                 (page_to_zone(pg+mask) != zone) ||
+                  (phys_to_nid(page_to_maddr(successor)) != node) )
+                 break;
+ 
+-- 
+2.7.4
+
