@@ -1,28 +1,10 @@
-require recipes-extended/xen/xen.inc
-
-SRCREV = "dw-v2017.3"
-
-XEN_REL="4.8-dw"
-
-PV = "${XEN_REL}+git${SRCPV}"
-
-S = "${WORKDIR}/git"
-
-SRC_URI = " \
-    git://github.com/dornerworks/xen.git;protocol=https;branch=${SRCREV} \
-    "
+FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 SRC_URI += " \
     file://defconfig \
     "
 
 DEPENDS += "u-boot-mkimage-native"
-
-EXTRA_OEMAKE += 'CROSS_COMPILE=${TARGET_PREFIX}'
-
-# Need to enable debugging, so guests can use the hypervisor console.
-# Should be disabled if security is a concern.
-EXTRA_OEMAKE := "${@'${EXTRA_OEMAKE}'.replace('debug=n', 'debug=y')}"
 
 XENIMAGE_KERNEL_LOADADDRESS ?= "0x5000000"
 
@@ -50,4 +32,3 @@ do_install_append() {
     install -m 0755 ${S}/tools/libvchan/vchan-node2 \
             ${D}/root/libvchan-example/vchan-node2
 }
-
