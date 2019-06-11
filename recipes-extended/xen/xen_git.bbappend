@@ -1,7 +1,7 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 SRC_URI += " \
-    file://defconfig \
+    file://arm64_defconfig \
     "
 
 DEPENDS += "u-boot-mkimage-native"
@@ -24,6 +24,11 @@ FILES_${PN}-vchan-example = "\
     /root/libvchan-example/vchan-node1 \
     /root/libvchan-example/vchan-node2 \
     "
+
+do_configure_prepend() {
+    cp "${WORKDIR}/arm64_defconfig" "${B}/xen/arch/arm/configs/arm64_defconfig" || \
+    bbfatal "Unable to copy arm64_defconfig to xen arm64_defconfig"
+}
 
 do_install_append() {
     install -d ${D}/root/libvchan-example/
