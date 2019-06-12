@@ -1,0 +1,260 @@
+From: Jarvis Roach and Stewart Hildebrand <stewart.hildebrand@dornerworks.com>
+Date: Tue, 28 May 2019 09:51:45 -0400
+Subject: [PATCH] IRQ latency measurement
+
+Add instrumentation to measure IRQ latency overhead of Xen.
+
+Capture a timer value at various places throughout the IRQ life cycle:
+  * At the beginning of hypervisor entry
+  * Inside the GIC interrupt servicing loop (where multiple interrupts may be
+    serviced)
+  * Just before exiting the hypervisor
+
+Track nested IRQs.
+
+Introduce a hypercall (42) to copy the recorded timing data to a guest.
+
+Signed-off-by: Stewart Hildebrand <stewart.hildebrand@dornerworks.com>
+---
+ xen/arch/arm/arm64/entry.S    | 14 +++++++++
+ xen/arch/arm/gic.c            | 25 ++++++++++++++++
+ xen/arch/arm/traps.c          | 56 +++++++++++++++++++++++++++++++++++
+ xen/include/public/irq_perf.h | 46 ++++++++++++++++++++++++++++
+ xen/include/public/xen.h      |  1 +
+ 5 files changed, 142 insertions(+)
+ create mode 100644 xen/include/public/irq_perf.h
+
+diff --git a/xen/arch/arm/arm64/entry.S b/xen/arch/arm/arm64/entry.S
+index ffa9a1c492..c618309b4f 100644
+--- a/xen/arch/arm/arm64/entry.S
++++ b/xen/arch/arm/arm64/entry.S
+@@ -99,7 +99,16 @@ lr      .req    x30             /* link register */
+         .macro  entry, hyp, compat, save_x0_x1=1
+         sub     sp, sp, #(UREGS_SPSR_el1 - UREGS_LR) /* CPSR, PC, SP, LR */
+         push    x28, x29
++
++        mrs		x28, CNTPCT_EL0					// get the physical counter as soon as possible
++
+         push    x26, x27
++
++        ldr		x29,=per_cpu__irqperf_start_ticks	// get the base of the per-cpu variable
++        mrs		x27, TPIDR_EL2						// determine the offset for this CPU
++        add		x29, x29, x27						// determine final address in memory
++        str		x28,[x29]							// store the counter into the calculated memory
++
+         push    x24, x25
+         push    x22, x23
+         push    x20, x21
+@@ -154,8 +163,13 @@ lr      .req    x30             /* link register */
+ 
+         exit_guest \compat
+ 
++        mov x0, 0
++        .else
++        mov x0, 1
+         .endif
+ 
++        bl      capture_end_ticks
++
+         b       return_from_trap
+ 
+         .endm
+diff --git a/xen/arch/arm/gic.c b/xen/arch/arm/gic.c
+index 1a27b76210..d1b2a7d0b7 100644
+--- a/xen/arch/arm/gic.c
++++ b/xen/arch/arm/gic.c
+@@ -36,6 +36,8 @@
+ #include <asm/vgic.h>
+ #include <asm/acpi.h>
+ 
++#include <public/irq_perf.h>
++
+ DEFINE_PER_CPU(uint64_t, lr_mask);
+ 
+ #undef GIC_DEBUG
+@@ -392,14 +394,37 @@ static void do_sgi(struct cpu_user_regs *regs, enum gic_sgi sgi)
+     gic_hw_ops->deactivate_irq(desc);
+ }
+ 
++static void capture_start_ticks(uint64_t ticks, unsigned int irq, uint16_t type)
++{
++    irq_perf_t* entry;
++    ASSERT(!local_irq_is_enabled());
++
++    entry = &(irqperf_data[get_processor_id()][this_cpu(irqperf_buffer_index)]);
++
++    entry->ticks = ticks;
++    entry->irq = irq;
++    entry->type = type;
++    if (START_EVENT == type)
++    {
++        this_cpu(irqperf_nesting)++;
++    }
++    entry->nesting = this_cpu(irqperf_nesting);
++
++    this_cpu(irqperf_buffer_index)++;
++    this_cpu(irqperf_buffer_index) %= NUM_IRQ_SAMPLES;
++}
++
+ /* Accept an interrupt from the GIC and dispatch its handler */
+ void gic_interrupt(struct cpu_user_regs *regs, int is_fiq)
+ {
+     unsigned int irq;
+ 
++    capture_start_ticks(this_cpu(irqperf_start_ticks), 0xffff, START_EVENT);
++
+     do  {
+         /* Reading IRQ will ACK it */
+         irq = gic_hw_ops->read_irq();
++        capture_start_ticks(READ_SYSREG64(CNTPCT_EL0), irq, IRQ_LOOP_EVENT);
+ 
+         if ( likely(irq >= 16 && irq < 1020) )
+         {
+diff --git a/xen/arch/arm/traps.c b/xen/arch/arm/traps.c
+index 5c18e918b0..71f74b8776 100644
+--- a/xen/arch/arm/traps.c
++++ b/xen/arch/arm/traps.c
+@@ -51,6 +51,35 @@
+ #include <asm/vgic.h>
+ #include <asm/vtimer.h>
+ 
++#include <asm/gic.h>
++#include <asm/guest_access.h>
++#include <public/irq_perf.h>
++
++DEFINE_PER_CPU(u64, irqperf_start_ticks);
++DEFINE_PER_CPU(int, irqperf_nesting);
++DEFINE_PER_CPU(int, irqperf_buffer_index);
++
++// 16KB per core, 64KB in all
++irq_perf_t irqperf_data[NUM_CPU][NUM_IRQ_SAMPLES];
++
++/*
++ * Handler for the hypercall -42. It copies the IRQ data into a buffer
++ * passed by the guest.
++ */
++
++long do_gic_irq_data(void* buffer, int cpu)
++{
++	BUILD_BUG_ON(sizeof(irq_perf_t) != 16);
++	// things to consider:
++	//		handler from one core may access date from another (cpu0 pulling cpu3's data)
++	// 		interrupts are still active on those other cores
++
++    raw_copy_to_guest((void*)(buffer), (void*)irqperf_data[cpu], NUM_IRQ_SAMPLES*sizeof(irq_perf_t));
++
++    // could try to do a memcmp here and return an error if buffer and irqper_data(cpu) don't match up
++    return 0;
++}
++
+ /* The base of the stack must always be double-word aligned, which means
+  * that both the kernel half of struct cpu_user_regs (which is pushed in
+  * entry.S) and struct cpu_info (which lives at the bottom of a Xen
+@@ -1422,6 +1451,7 @@ static arm_hypercall_t arm_hypercall_table[] = {
+     HYPERCALL(platform_op, 1),
+     HYPERCALL_ARM(vcpu_op, 3),
+     HYPERCALL(vm_assist, 2),
++    HYPERCALL(gic_irq_data, 2),				// new hypercall to get interrupt perf data
+ };
+ 
+ #ifndef NDEBUG
+@@ -2240,6 +2270,32 @@ void do_trap_fiq(struct cpu_user_regs *regs)
+     gic_interrupt(regs, 1);
+ }
+ 
++void capture_end_ticks(int is_hyp)
++{
++    irq_perf_t* entry;
++    ASSERT(!local_irq_is_enabled());
++
++    if (0 != this_cpu(irqperf_nesting))
++    {
++        entry = &(irqperf_data[get_processor_id()][this_cpu(irqperf_buffer_index)]);
++
++        entry->ticks = READ_SYSREG64(CNTPCT_EL0);
++        entry->irq = 0xffff;
++        if (is_hyp)
++        {
++            entry->type = END_HYP_EVENT;
++        }
++        else
++        {
++            entry->type = END_GUEST_EVENT;
++        }
++        entry->nesting = this_cpu(irqperf_nesting)--;   /* store then decrement the nesting level */
++
++        this_cpu(irqperf_buffer_index)++;
++        this_cpu(irqperf_buffer_index) %= NUM_IRQ_SAMPLES;
++    }
++}
++
+ void leave_hypervisor_tail(void)
+ {
+     while (1)
+diff --git a/xen/include/public/irq_perf.h b/xen/include/public/irq_perf.h
+new file mode 100644
+index 0000000000..ae2ae19386
+--- /dev/null
++++ b/xen/include/public/irq_perf.h
+@@ -0,0 +1,46 @@
++/*
++ * Copyright (c) 2019 DornerWorks
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++#ifndef __IRQ_PERF_H__
++#define __IRQ_PERF_H__
++
++#ifdef __XEN__
++#include <xen/types.h>
++#include <xen/percpu.h>
++#endif
++
++#define NUM_CPU 4
++#define NUM_IRQ_SAMPLES 1024
++
++struct irq_perf {
++    uint64_t ticks;
++    uint32_t irq;
++    uint16_t type;
++    uint16_t nesting;
++};
++typedef struct irq_perf irq_perf_t;
++
++#ifdef __XEN__
++DECLARE_PER_CPU(u64, irqperf_start_ticks);      /* start ticks captured in entry.S */
++DECLARE_PER_CPU(int, irqperf_nesting);          /* number of nested interrupts */
++DECLARE_PER_CPU(int, irqperf_buffer_index);     /* index into circular buffer */
++
++extern irq_perf_t irqperf_data[NUM_CPU][NUM_IRQ_SAMPLES]; /* irq timing data, per cpu (without doing the DEFINE_PER_CPU stuff) */
++#endif
++
++#define START_EVENT     1
++#define IRQ_LOOP_EVENT  2
++#define END_GUEST_EVENT 4
++#define END_HYP_EVENT   8
++
++#endif
+diff --git a/xen/include/public/xen.h b/xen/include/public/xen.h
+index fb1df8f293..e2388cd8d2 100644
+--- a/xen/include/public/xen.h
++++ b/xen/include/public/xen.h
+@@ -121,6 +121,7 @@ DEFINE_XEN_GUEST_HANDLE(xen_ulong_t);
+ #define __HYPERVISOR_xc_reserved_op       39 /* reserved for XenClient */
+ #define __HYPERVISOR_xenpmu_op            40
+ #define __HYPERVISOR_dm_op                41
++#define __HYPERVISOR_gic_irq_data         42
+ 
+ /* Architecture-specific hypercall definitions. */
+ #define __HYPERVISOR_arch_0               48
+-- 
+2.21.0
+

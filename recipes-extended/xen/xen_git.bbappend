@@ -6,6 +6,7 @@ SRC_URI += " \
     file://0002-platforms-zynqmp-Mediate-EEMI-calls-for-TCM.patch \
     file://0003-Added-simple-boot-traces-to-Xen.patch \
     file://0004-Added-Counter-Timestamp-before-a-guest-is-created.patch \
+    file://0005-IRQ-latency-measurement.patch \
     "
 
 DEPENDS += "u-boot-mkimage-native"
