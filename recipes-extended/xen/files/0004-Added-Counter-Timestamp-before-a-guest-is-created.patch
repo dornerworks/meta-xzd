@@ -1,0 +1,35 @@
+From: Robbie VanVossen <robert.vanvossen@dornerworks.com>
+Date: Tue, 13 Dec 2016 11:29:05 -0500
+Subject: [PATCH 2/2] Added Counter Timestamp before a guest is created.
+
+This allows us to calculate boot times in Dom0 for guests.
+TODO: This should be made platform agnostic and should be possible
+to #def out.
+---
+ xen/common/domctl.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/xen/common/domctl.c b/xen/common/domctl.c
+index 891ad58..3f6afd0 100644
+--- a/xen/common/domctl.c
++++ b/xen/common/domctl.c
+@@ -27,6 +27,7 @@
+ #include <xen/vm_event.h>
+ #include <xen/monitor.h>
+ #include <asm/current.h>
++#include <asm/processor.h>
+ #include <asm/irq.h>
+ #include <asm/page.h>
+ #include <asm/p2m.h>
+@@ -532,6 +533,8 @@ long do_domctl(XEN_GUEST_HANDLE_PARAM(xen_domctl_t) u_domctl)
+             rover = dom;
+         }
+ 
++        printk("Physical Timer Value (D%u): %lu\n", dom, READ_SYSREG64(CNTPCT_EL0));
++
+         d = domain_create(dom, &op->u.createdomain);
+         if ( IS_ERR(d) )
+         {
+-- 
+2.7.4
+

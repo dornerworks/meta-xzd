@@ -1,0 +1,180 @@
+From: Robbie VanVossen <robert.vanvossen@dornerworks.com>
+Date: Tue, 13 Dec 2016 11:28:25 -0500
+Subject: [PATCH 1/2] Added simple boot traces to Xen.
+
+TODO: Should use XenTrace instead.
+---
+ xen/arch/arm/Makefile          |  2 ++
+ xen/arch/arm/dw_trace.c        | 29 +++++++++++++++++++++++++++++
+ xen/arch/arm/setup.c           | 15 +++++++++++++++
+ xen/arch/arm/time.c            |  7 +++++++
+ xen/include/asm-arm/dw_trace.h | 15 +++++++++++++++
+ xen/include/asm-arm/time.h     |  7 +++----
+ 6 files changed, 71 insertions(+), 4 deletions(-)
+ create mode 100644 xen/arch/arm/dw_trace.c
+ create mode 100644 xen/include/asm-arm/dw_trace.h
+
+diff --git a/xen/arch/arm/Makefile b/xen/arch/arm/Makefile
+index b9b141dc84..28ffdd2125 100644
+--- a/xen/arch/arm/Makefile
++++ b/xen/arch/arm/Makefile
+@@ -60,6 +60,8 @@ obj-$(CONFIG_SBSA_VUART_CONSOLE) += vpl011.o
+ obj-y += vsmc.o
+ obj-y += vpsci.o
+ obj-y += vuart.o
++obj-y += dw_trace.o
++obj-$(CONFIG_LIVEPATCH) += livepatch.o
+ 
+ #obj-bin-y += ....o
+ 
+diff --git a/xen/arch/arm/dw_trace.c b/xen/arch/arm/dw_trace.c
+new file mode 100644
+index 0000000000..291590b336
+--- /dev/null
++++ b/xen/arch/arm/dw_trace.c
+@@ -0,0 +1,29 @@
++/*
++ * xen/arch/arm/dw_trace.c
++ *
++ * Boot time instrumentation used by Dornerworks for platform
++ * characterization.
++ */
++
++#include <xen/lib.h>
++#include <asm/dw_trace.h>
++#include <xen/time.h>
++
++#ifdef DW_TRACE
++
++void dw_print_boot_time(void)
++{
++
++    printk("--- Xen Boot Time Output ---\n");
++    printk("Xen C Env Enter Time: xen_cstart_t = %lu ticks\n" , xen_cstart_t);
++    printk("Xen C Env Enter Time: xen_cstart_t = %ld ns\n" , ticks_to_ns(xen_cstart_t));
++
++    printk("Xen Pre-Init Time: boot_count = %lu ticks\n" , boot_count);
++    printk("Xen Pre-Init Time: boot_count = %ld ns\n" , ticks_to_ns(boot_count));
++
++    printk("Xen Boot End Time: xen_done_t = %lu ticks\n" , xen_done_t+boot_count);
++    printk("Xen Boot End Time: xen_done_t = %ld ns\n" , ticks_to_ns(xen_done_t+boot_count));
++    
++    return;
++}
++#endif
+\ No newline at end of file
+diff --git a/xen/arch/arm/setup.c b/xen/arch/arm/setup.c
+index 32fd015034..359d6738b4 100644
+--- a/xen/arch/arm/setup.c
++++ b/xen/arch/arm/setup.c
+@@ -49,6 +49,7 @@
+ #include <asm/setup.h>
+ #include <xsm/xsm.h>
+ #include <asm/acpi.h>
++#include <asm/dw_trace.h>
+ 
+ struct bootinfo __initdata bootinfo;
+ 
+@@ -65,6 +66,11 @@ integer_param("xenheap_megabytes", opt_xenheap_megabytes);
+ 
+ domid_t __read_mostly max_init_domid;
+ 
++#ifdef DW_TRACE
++    uint64_t __read_mostly xen_cstart_t;
++    uint64_t __read_mostly xen_done_t;
++#endif
++
+ static __used void init_done(void)
+ {
+     /* Must be done past setting system_state. */
+@@ -852,6 +858,10 @@ void __init start_xen(unsigned long boot_phys_offset,
+     struct domain *dom0;
+     struct xen_domctl_createdomain dom0_cfg = {};
+ 
++#ifdef DW_TRACE
++    xen_cstart_t = get_cycles();
++#endif
++
+     dcache_line_bytes = read_dcache_line_bytes();
+ 
+     percpu_init_areas();
+@@ -1029,6 +1039,11 @@ void __init start_xen(unsigned long boot_phys_offset,
+      * since the static one we're running on is about to be freed. */
+     memcpy(idle_vcpu[0]->arch.cpu_info, get_cpu_info(),
+            sizeof(struct cpu_info));
++
++#ifdef DW_TRACE
++    xen_done_t = get_cycles();
++    dw_print_boot_time();
++#endif
+     switch_stack_and_jump(idle_vcpu[0]->arch.cpu_info, init_done);
+ }
+ 
+diff --git a/xen/arch/arm/time.c b/xen/arch/arm/time.c
+index c11fcfeadd..83a7b4552b 100644
+--- a/xen/arch/arm/time.c
++++ b/xen/arch/arm/time.c
+@@ -194,6 +194,13 @@ s_time_t get_s_time(void)
+     return ticks_to_ns(ticks);
+ }
+ 
++/* Return the number of ticks since boot */
++cycles_t get_cycles(void)
++{
++        /* return raw tick count of main timer */
++        return READ_SYSREG64(CNTPCT_EL0) - boot_count;
++}
++
+ /* Set the timer to wake us up at a particular time.
+  * Timeout is a Xen system time (nanoseconds since boot); 0 disables the timer.
+  * Returns 1 on success; 0 if the timeout is too soon or is in the past. */
+diff --git a/xen/include/asm-arm/dw_trace.h b/xen/include/asm-arm/dw_trace.h
+new file mode 100644
+index 0000000000..99e6cf6adb
+--- /dev/null
++++ b/xen/include/asm-arm/dw_trace.h
+@@ -0,0 +1,15 @@
++#ifndef __DW_TRACE_H__
++#define __DW_TRACE_H__
++
++#define DW_TRACE
++/* #undef DW_TRACE */
++
++#ifdef DW_TRACE
++
++extern uint64_t xen_done_t;
++extern uint64_t xen_cstart_t;
++
++void dw_print_boot_time(void);
++
++#endif
++#endif /* __DW_TRACE_H__ */
+\ No newline at end of file
+diff --git a/xen/include/asm-arm/time.h b/xen/include/asm-arm/time.h
+index 5b9a31de91..850e937d4e 100644
+--- a/xen/include/asm-arm/time.h
++++ b/xen/include/asm-arm/time.h
+@@ -7,10 +7,6 @@
+ 
+ typedef unsigned long cycles_t;
+ 
+-static inline cycles_t get_cycles (void)
+-{
+-        return 0;
+-}
+ 
+ /* List of timer's IRQ */
+ enum timer_ppi
+@@ -37,6 +33,9 @@ extern void init_timer_interrupt(void);
+ /* Counter value at boot time */
+ extern uint64_t boot_count;
+ 
++/* Get raw system tick count */
++cycles_t get_cycles(void);
++
+ extern s_time_t ticks_to_ns(uint64_t ticks);
+ extern uint64_t ns_to_ticks(s_time_t ns);
+ 
+-- 
+2.21.0
+

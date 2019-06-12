@@ -4,6 +4,8 @@ SRC_URI += " \
     file://arm64_defconfig \
     file://0001-Check-zone-before-merging-adjacent-blocks-in-heap.patch \
     file://0002-platforms-zynqmp-Mediate-EEMI-calls-for-TCM.patch \
+    file://0003-Added-simple-boot-traces-to-Xen.patch \
+    file://0004-Added-Counter-Timestamp-before-a-guest-is-created.patch \
     "
 
 DEPENDS += "u-boot-mkimage-native"
