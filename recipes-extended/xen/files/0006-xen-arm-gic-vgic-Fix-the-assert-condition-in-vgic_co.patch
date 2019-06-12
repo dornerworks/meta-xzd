@@ -1,0 +1,40 @@
+From 863549158129d326b2e5850f722bfda643264f2b Mon Sep 17 00:00:00 2001
+From: Andrii Anisov <andrii_anisov@epam.com>
+Date: Fri, 25 Jan 2019 19:06:02 +0200
+Subject: [PATCH] xen/arm: gic-vgic: Fix the assert condition in
+ vgic_connect_hw_irq
+
+Currently, the assert condition in vgic_connect_hw_irq does not
+correspond to the comment above and result to hit the assertion
+on HW IRQ disconnection.
+
+Fix the condition so it corresponds to the comment and allows IRQ
+disconnection on debug builds.
+
+Fixes: ec2a2f1 ("ARM: VGIC: factor out vgic_connect_hw_irq()")
+Signed-off-by: Andrii Anisov <andrii_anisov@epam.com>
+Suggested-by: Stefan Nuernberger <snu@amazon.de>
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+[julieng: Reword the commit message]
+Acked-by: Julien Grall <julien.grall@arm.com>
+Release-acked-by: Juergen Gross <jgross@suse.com>
+---
+ xen/arch/arm/gic-vgic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/xen/arch/arm/gic-vgic.c b/xen/arch/arm/gic-vgic.c
+index 48922f5595..a3bba854da 100644
+--- a/xen/arch/arm/gic-vgic.c
++++ b/xen/arch/arm/gic-vgic.c
+@@ -443,7 +443,7 @@ int vgic_connect_hw_irq(struct domain *d, struct vcpu *v, unsigned int virq,
+     int ret = 0;
+ 
+     /* "desc" is optional when we disconnect an IRQ. */
+-    ASSERT(connect && desc);
++    ASSERT(!connect || desc);
+ 
+     /* We are taking to rank lock to prevent parallel connections. */
+     vgic_lock_rank(v_target, rank, flags);
+-- 
+2.21.0
+
