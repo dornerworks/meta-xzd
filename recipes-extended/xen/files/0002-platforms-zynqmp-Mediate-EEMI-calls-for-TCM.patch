@@ -1,0 +1,45 @@
+From: Stewart Hildebrand <stewart.hildebrand@dornerworks.com>
+Date: Thu, 16 May 2019 11:21:05 -0400
+Subject: [PATCH] platforms/zynqmp: Mediate EEMI calls for TCM
+
+Signed-off-by: Stewart Hildebrand <stewart.hildebrand@dornerworks.com>
+---
+ xen/arch/arm/platforms/xilinx-zynqmp-eemi.c      | 5 +++++
+ xen/include/asm-arm/platforms/xilinx-zynqmp-mm.h | 5 +++++
+ 2 files changed, 10 insertions(+)
+
+diff --git a/xen/arch/arm/platforms/xilinx-zynqmp-eemi.c b/xen/arch/arm/platforms/xilinx-zynqmp-eemi.c
+index 6a6eaba28e..39375d1ce2 100644
+--- a/xen/arch/arm/platforms/xilinx-zynqmp-eemi.c
++++ b/xen/arch/arm/platforms/xilinx-zynqmp-eemi.c
+@@ -172,6 +172,11 @@ static const struct pm_access pm_node_access[] = {
+ 
+     [NODE_PCIE] = { MM_PCIE_ATTRIB },
+     [NODE_RTC] = { MM_RTC },
++
++    [NODE_TCM_0_A] = { MM_TCM_0_A },
++    [NODE_TCM_0_B] = { MM_TCM_0_B },
++    [NODE_TCM_1_A] = { MM_TCM_1_A },
++    [NODE_TCM_1_B] = { MM_TCM_1_B },
+ };
+ 
+ /*
+diff --git a/xen/include/asm-arm/platforms/xilinx-zynqmp-mm.h b/xen/include/asm-arm/platforms/xilinx-zynqmp-mm.h
+index db9f43e294..47921ad28b 100644
+--- a/xen/include/asm-arm/platforms/xilinx-zynqmp-mm.h
++++ b/xen/include/asm-arm/platforms/xilinx-zynqmp-mm.h
+@@ -172,6 +172,11 @@
+ #define MM_PMU_GLOBAL           0xffd80000
+ #define MM_CSU                  0xffca0000
+ 
++#define MM_TCM_0_A 0xffe00000
++#define MM_TCM_0_B 0xffe20000
++#define MM_TCM_1_A 0xffe90000
++#define MM_TCM_1_B 0xffeb0000
++
+ /* Selected set of register definitions:  */
+ #define R_CRF_APLL_CTRL           0x20
+ #define R_CRF_ACPU_CTRL           0x60
+-- 
+2.21.0
+

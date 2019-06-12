@@ -3,6 +3,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 SRC_URI += " \
     file://arm64_defconfig \
     file://0001-Check-zone-before-merging-adjacent-blocks-in-heap.patch \
+    file://0002-platforms-zynqmp-Mediate-EEMI-calls-for-TCM.patch \
     "
 
 DEPENDS += "u-boot-mkimage-native"
