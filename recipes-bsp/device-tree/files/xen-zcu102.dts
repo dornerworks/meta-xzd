@@ -22,9 +22,7 @@
  * THE SOFTWARE.
  */
 
-/dts-v1/;
-/include/ "dtg/system-top.dts"
-
+#include "system-top.dts"
 
 / {
     model = "ZynqMP ZCU102 Xen";
@@ -53,10 +51,6 @@
   };
 
 &xilinx_ams {
-    status = "disabled";
-};
-
-&xilinx_drm {
     status = "disabled";
 };
 
@@ -102,27 +96,23 @@
     xen,passthrough = <1>;
 };
 
-&xlnx_dp {
+&zynqmp_dp_snd_card0 {
     status = "disabled";
 };
 
-&xlnx_dp_snd_card {
-    status = "disabled"; 
-};
-
-&xlnx_dp_snd_codec0 {
+&zynqmp_dp_snd_codec0 {
     status = "disabled";
 };
 
-&xlnx_dp_snd_pcm0 {
+&zynqmp_dp_snd_pcm0 {
     status = "disabled";
 };
 
-&xlnx_dp_snd_pcm1 {
+&zynqmp_dp_snd_pcm1 {
     status = "disabled";
 };
 
-&xlnx_dp_sub {
+&zynqmp_dpsub {
     status = "disabled";
 };
 
