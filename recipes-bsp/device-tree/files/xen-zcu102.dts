@@ -37,7 +37,7 @@
 
         dom0 {
             compatible = "xen,linux-zimage", "xen,multiboot-module";
-            reg = <0x0 0x80000 0x3100000>;
+            reg = <0x0 0x300000 0x14D00000>;
         };
     };
     timer {
