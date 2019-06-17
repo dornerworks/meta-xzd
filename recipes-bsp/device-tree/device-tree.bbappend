@@ -3,6 +3,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 SRC_URI_append_zcu102-zynqmp = " \
 	file://xen-zcu102.dts \
 	file://xen-zcu102-enet_pt.dts \
+	file://0001-BOARD-zcu102-Fix-the-compatible-string-for-eeprom.patch \
 	"
 
 SRC_URI_append_ultrazed-zynqmp = " \
