@@ -28,6 +28,7 @@
     model = "ZynqMP UltraZed Xen";
 
     chosen {
+        xlnx,eeprom = &macid;
         bootargs = "earlycon=cdns,mmio,0xFF000000,115200n8";
         stdout-path = "serialN:115200n8";
         #address-cells = <0x2>;
@@ -126,13 +127,18 @@
             reg = <0>;
 
             eeprom: eeprom1@50 {
-                compatible = "at,24c02";
+                compatible = "atmel,24c02";
                 reg = <0x50>;
             };
 
             macid: eeprom2@51 {
-                compatible = "at,24mac402";
+                compatible = "atmel,24mac402";
                 reg = <0x51>;
+                #address-cells = <1>;
+                #size-cells = <1>;
+                eth-mac@fa {
+                    reg = <0x000000fa 0x00000006>;
+                };
             };
 
             idt5901: clock-generator@6a {
