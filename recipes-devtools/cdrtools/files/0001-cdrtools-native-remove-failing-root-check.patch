@@ -1,0 +1,24 @@
+From: Stewart Hildebrand <stewart.hildebrand@dornerworks.com>
+Date: Tue, 25 Jun 2019 17:03:34 -0400
+Subject: [PATCH] cdrtools-native: remove failing root check
+
+and assume we're not root to keep our CI happy
+---
+ conf/install-sh | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/conf/install-sh b/conf/install-sh
+index 31bdbf8..8ed1a9d 100755
+--- a/conf/install-sh
++++ b/conf/install-sh
+@@ -73,7 +73,6 @@ trap "rm -f ${dsttmp}; rm -rf ${dstdir}" 0
+ mkdir ${dstdir}
+ ${chmodcmd} ${dstdir}
+ echo > ${dsttmp}
+-${chownprog} root ${dsttmp} 2> /dev/null && ${chmodcmd} ${dsttmp} 2> /dev/null && rootflag=TRUE
+ #
+ # Win95 has no user 'root' and chown succeeds always.
+ # Unfortunately, there is also no user 'bin' and chown complains about
+-- 
+2.22.0
+
