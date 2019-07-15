@@ -9,6 +9,8 @@ SRC_URI += "file://filesystem_overlay.scc"
 SRC_URI += "file://version.scc"
 SRC_URI += "file://cma_size.scc"
 
+KERNEL_FEATURES_append = "${@bb.utils.contains('DISTRO_FEATURES', 'xen', ' zynqmp/xen/xen.scc', '', d)}"
+
 LINUX_VERSION_EXTENSION = "-dw"
 
 # Debug file additions
