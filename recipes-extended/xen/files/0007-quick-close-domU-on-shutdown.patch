@@ -1,0 +1,60 @@
+From be034cf03ca5da993c4b5cf5c789b493a5b6733f Mon Sep 17 00:00:00 2001
+From: Dave Padula <dave.padula@arris.com>
+Date: Thu, 25 Oct 2018 11:34:50 -0400
+Subject: [PATCH 1/2] Disable save for domU during shutdown
+
+---
+ tools/hotplug/Linux/init.d/sysconfig.xendomains.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/hotplug/Linux/init.d/sysconfig.xendomains.in b/tools/hotplug/Linux/init.d/sysconfig.xendomains.in
+index f61ef9c..53ca86a 100644
+--- a/tools/hotplug/Linux/init.d/sysconfig.xendomains.in
++++ b/tools/hotplug/Linux/init.d/sysconfig.xendomains.in
+@@ -53,7 +53,7 @@ XENDOMAINS_MIGRATE=""
+ # (e.g. because you rather shut domains down).
+ # If domain saving does succeed, SHUTDOWN will not be executed.
+ #
+-XENDOMAINS_SAVE=@XEN_LIB_DIR@/save
++XENDOMAINS_SAVE=""
+ 
+ ## Type: string
+ ## Default: "--wait"
+-- 
+2.7.4
+
+
+From cbec140fb8581a2aa68d6292e67219f5c272ad2a Mon Sep 17 00:00:00 2001
+From: Dave Padula <dave.padula@arris.com>
+Date: Thu, 25 Oct 2018 13:27:06 -0400
+Subject: [PATCH 2/2] Quickly close all domU during shutdown
+
+---
+ tools/hotplug/Linux/init.d/sysconfig.xendomains.in | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tools/hotplug/Linux/init.d/sysconfig.xendomains.in b/tools/hotplug/Linux/init.d/sysconfig.xendomains.in
+index 53ca86a..330d142 100644
+--- a/tools/hotplug/Linux/init.d/sysconfig.xendomains.in
++++ b/tools/hotplug/Linux/init.d/sysconfig.xendomains.in
+@@ -63,7 +63,7 @@ XENDOMAINS_SAVE=""
+ # set this to "--wait". Omit the "--wait" flag to avoid waiting
+ # for the domain to be really down. Leave empty to skip domain shutdown.
+ #
+-XENDOMAINS_SHUTDOWN="--wait"
++XENDOMAINS_SHUTDOWN=""
+ 
+ ## Type: string
+ ## Default: "--all --wait"
+@@ -78,7 +78,7 @@ XENDOMAINS_SHUTDOWN="--wait"
+ # (Note: This will hit all virtual machines, even if XENDOMAINS_AUTO_ONLY
+ # is set.)
+ # 
+-XENDOMAINS_SHUTDOWN_ALL="--all --wait"
++XENDOMAINS_SHUTDOWN_ALL=""
+ 
+ ## Type: boolean
+ ## Default: true
+-- 
+2.7.4
+

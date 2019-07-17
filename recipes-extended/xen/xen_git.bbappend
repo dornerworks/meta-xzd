@@ -8,6 +8,7 @@ SRC_URI += " \
     file://0004-Added-Counter-Timestamp-before-a-guest-is-created.patch \
     file://0005-IRQ-latency-measurement.patch \
     file://0006-xen-arm-gic-vgic-Fix-the-assert-condition-in-vgic_co.patch \
+    file://0007-quick-close-domU-on-shutdown.patch \
     "
 
 DEPENDS += "u-boot-mkimage-native"
