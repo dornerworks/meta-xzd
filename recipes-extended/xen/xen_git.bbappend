@@ -9,6 +9,9 @@ SRC_URI += " \
     file://0005-IRQ-latency-measurement.patch \
     file://0006-xen-arm-gic-vgic-Fix-the-assert-condition-in-vgic_co.patch \
     file://0007-quick-close-domU-on-shutdown.patch \
+    file://0008-xen-arm-p2m-Reduce-the-locking-section-in-get_page_f.patch \
+    file://0009-xen-arm-p2m-Limit-call-to-mem-access-code-use-in-get.patch \
+    file://0010-xen-arm-p2m-Handle-translation-fault-in-get_page_fro.patch \
     "
 
 DEPENDS += "u-boot-mkimage-native"
