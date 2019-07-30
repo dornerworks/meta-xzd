@@ -196,6 +196,7 @@
 
 &sdhci1 {
     no-1-8-v;
+    disable-wp;
 };
 
 &dwc3_0 {
